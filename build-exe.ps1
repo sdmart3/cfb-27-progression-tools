@@ -44,15 +44,22 @@ New-Item -ItemType Directory -Force -Path $app | Out-Null
 robocopy (Join-Path $root 'src') "$app\src" /E /NFL /NDL /NJH /NJS /NC /NS | Out-Null
 Copy-Item (Join-Path $root 'package.json') (Join-Path $app 'package.json') -Force
 
-# The two save passes, the season reader that picks between them, and what they require, copied in so
-# the app carries its own logic. Deliberately NOT team-overall.js -- this build is the two-tool project
-# (Development Spread + Regression Tool) without the Team Overall correction pass.
+# The two save passes and what they require, copied in from the parent project so the app carries its
+# own logic. Deliberately NOT team-overall.js -- this build is the two-tool project (Development
+# Spread + Regression Tool) without the Team Overall correction pass.
 Write-Host "Copying save tools..."
 $toolsOut = Join-Path $app 'src\tools'
 New-Item -ItemType Directory -Force -Path $toolsOut | Out-Null
-foreach ($f in @('spread-skill-caps.js','spread-skill-caps-env.js','regression-tool.js','season-plan.js','cap-baseline.js','trait-baseline.js','season-info.js','save-players.js','cap-anchor.js','save-backup.js','save-schema.js','season-performance.js','player-awards.js')) {
+foreach ($f in @('spread-skill-caps.js','spread-skill-caps-env.js','regression-tool.js','cap-baseline.js','trait-baseline.js','season-info.js','save-players.js','cap-anchor.js','save-backup.js','save-schema.js','season-performance.js','player-awards.js')) {
   Copy-Item (Join-Path $toolsSrc $f) (Join-Path $toolsOut $f) -Force
 }
+
+# The season reader that picks between the two passes above is THIS repo's own fork of the parent
+# project's tools/season-plan.js (local-tools/season-plan.js), not a copy of the shared one -- the
+# shared version also lists the Team Overall correction pass, which this project deliberately does not
+# ship. Copying it unmodified would leave a dead 'teamoverall' step and a require('./team-overall.js')
+# this build's copy list never satisfies.
+Copy-Item (Join-Path $root 'local-tools\season-plan.js') (Join-Path $toolsOut 'season-plan.js') -Force
 
 # The newer table schema. Without it the Coach table has no schema at all and every coach field
 # reads back null, which silently zeroed coach level and prestige in the program score.

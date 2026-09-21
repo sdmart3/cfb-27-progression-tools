@@ -1,0 +1,12 @@
+{
+  "name": "progression-tools",
+  "version": "1.0.0",
+  "description": "Development Spread and Regression Tool in one app: reads where a CFB 27 dynasty save is in the season and runs the passes that belong there",
+  "main": "src/main.js",
+  "type": "commonjs",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "package": "powershell -ExecutionPolicy Bypass -File build-exe.ps1"
+  }
+}

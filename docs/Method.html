@@ -1,0 +1,282 @@
+<title>Progression Tools Method Book</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f5f6f3; --panel:#ffffff; --ink:#15213a; --ink-2:#4a556b; --rule:#d5d9d2;
+  --mod:#2f7d4e; --mod-soft:#d7eadd; --van:#b5533c; --van-soft:#f1dcd5; --target:#c9962f; --mono-bg:#eef1ea;
+  --link:#1f5f8b;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#121821; --panel:#1a222d; --ink:#e7ebef; --ink-2:#aab3c0; --rule:#2d3742;
+  --mod:#5cc48a; --mod-soft:#1f3a2c; --van:#e07a5f; --van-soft:#3f2620; --target:#e5b654; --mono-bg:#1f2833; --link:#7fb6e0;
+}}
+:root[data-theme="dark"]{
+  --bg:#121821; --panel:#1a222d; --ink:#e7ebef; --ink-2:#aab3c0; --rule:#2d3742;
+  --mod:#5cc48a; --mod-soft:#1f3a2c; --van:#e07a5f; --van-soft:#3f2620; --target:#e5b654; --mono-bg:#1f2833; --link:#7fb6e0;
+}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,Segoe UI,sans-serif;font-size:16px;line-height:1.55;margin:0;padding-block:0 64px;padding-inline:16px}
+.wrap{max-width:74ch;margin:0 auto}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",Impact,sans-serif;text-wrap:balance;line-height:1.05;margin:0}
+h1{font-size:clamp(40px,7vw,64px);font-weight:700;letter-spacing:.01em;text-transform:uppercase}
+h2{font-size:32px;font-weight:700;margin-top:56px;padding-top:18px;border-top:3px solid var(--ink)}
+h3{font-size:22px;font-weight:600;margin-top:28px;color:var(--ink)}
+.kicker{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.12em;font-size:14px;color:var(--ink-2);font-weight:600}
+header{padding-block:40px 8px}
+header p.lead{font-size:19px;max-width:60ch;margin:16px 0 0}
+p{margin:12px 0}
+a{color:var(--link)}
+.toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px 24px;margin:24px 0 8px;padding:16px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.toc a{text-decoration:none;color:var(--ink);font-family:"Barlow Condensed",sans-serif;font-size:18px;font-weight:600}
+.toc a span{color:var(--ink-2);font-weight:600;margin-right:6px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:15px;margin:14px 0}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"Barlow Condensed",sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);font-weight:600}
+td.n,th.n{text-align:right}
+.tbl{overflow-x:auto}
+.formula{font-family:"IBM Plex Mono",Consolas,monospace;font-size:14.5px;background:var(--mono-bg);padding:12px 14px;border-left:3px solid var(--mod);margin:14px 0;overflow-x:auto;white-space:pre}
+code{font-family:"IBM Plex Mono",Consolas,monospace;font-size:.92em;background:var(--mono-bg);padding:1px 5px;border-radius:3px}
+figure{margin:22px 0;padding:14px 12px 10px;background:var(--panel);border:1px solid var(--rule)}
+figure svg{width:100%;height:auto;display:block;max-width:100%}
+figcaption{font-size:14px;color:var(--ink-2);margin-top:8px;line-height:1.45}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13.5px;color:var(--ink-2);margin:0 0 6px}
+.legend i{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.note{border-left:3px solid var(--target);padding:8px 14px;margin:16px 0;background:var(--panel)}
+dl.ledger{margin:0}
+dl.ledger>div{padding:14px 0;border-bottom:1px solid var(--rule)}
+dl.ledger dt{font-weight:600;font-size:17px}
+dl.ledger dd{margin:6px 0 0}
+dl.ledger dd b{font-family:"Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.06em;font-size:13px;color:var(--ink-2);margin-right:6px}
+.tag{display:inline-block;font-family:"Barlow Condensed",sans-serif;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--rule);margin-left:8px;vertical-align:middle;color:var(--ink-2)}
+.tag.ok{border-color:var(--mod);color:var(--mod)}
+.tag.open{border-color:var(--target);color:var(--target)}
+ol.steps{padding-left:22px}
+ol.steps li{margin:10px 0}
+ol.steps li strong{font-family:"Barlow Condensed",sans-serif;font-size:18px;letter-spacing:.02em}
+footer{margin-top:56px;padding-top:14px;border-top:1px solid var(--rule);font-size:14px;color:var(--ink-2)}
+@media (prefers-reduced-motion: no-preference){ figure svg rect{transition:opacity .2s} }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="kicker">College Football 27 · Progression Tools · built 19-21 September 2026</div>
+  <h1>Progression Tools<br>Method Book</h1>
+  <p class="lead">Every formula the app runs, every number measured while building it, and every assumption made along the way. Written so a curious player can follow it and a sceptical one can check it.</p>
+</header>
+
+<nav class="toc" aria-label="Contents">
+  <a href="#glance"><span>1</span>What it changes</a>
+  <a href="#spread"><span>2</span>Development Spread</a>
+  <a href="#regression"><span>3</span>Regression Tool</a>
+  <a href="#tested"><span>4</span>Three seasons, measured</a>
+  <a href="#assume"><span>5</span>Assumptions and limits</a>
+  <a href="#oneapp"><span>6</span>One app instead of two</a>
+  <a href="#method"><span>7</span>How it was tested</a>
+</nav>
+
+<h2 id="glance">1. What it changes</h2>
+<p>The app opens your dynasty save directly and reads where it sits in the season. Depending on that, it runs some or none of two passes. Nothing else in the save is touched: no ratings, no rosters, no positions.</p>
+<div class="tbl"><table>
+<tr><th>Pass</th><th>Runs at</th><th>Vanilla behaviour</th><th>Measured effect</th></tr>
+<tr><td>Development Spread &mdash; recruits</td><td>Preseason, week 0</td><td>Ceilings fixed at generation, tracking recruiting stars closely</td><td>Ceiling spread widened (sd 12.5 &rarr; 20.3) with no change to the league average</td></tr>
+<tr><td>Development Spread &mdash; roster</td><td>National Signing Day</td><td>Same, for returning players</td><td>Players at 90+ overall and under 65 both roughly doubled over three seasons; league average held flat</td></tr>
+<tr><td>Regression Tool</td><td>National Signing Day (before the roster pass)</td><td>Development trait only ever rises</td><td>~50 falls a season against 100-150 rises; blue-chip favouritism in the raw judgement cut from +11.2 to +0.7 net tiers per 100 four-stars once measured against billing</td></tr>
+</table></div>
+
+<h2 id="spread">2. Development Spread</h2>
+<p>Every player has six skill-group ceilings (<code>SkillGroupCap1..6</code>), 0-20 each, 120 in total. A ceiling is a hard stop: once a group reaches it, no more levels can be bought there, confirmed by pairing 40 young players on position, class, trait and overall and giving one of each pair a ceiling of 120 and the other 36 &mdash; the high-ceiling player won 37 of 37 pairs after two seasons (t = 19.1). The game fixes these ceilings when a player is generated and they track recruiting stars closely, so a five-star almost never busts and a two-star almost never breaks out. The Spread re-rolls them once a year so surprises in both directions happen at realistic rates, without moving any group's own average.</p>
+<p>Here is the whole computation for one player, in order.</p>
+<ol class="steps">
+<li><strong>Peers.</strong> His cell is players with the same development trait, position and class year (ceilings don't grow with age, but low-ceiling players leave, so the class averages still differ). The anchor is his cell's average original ceiling, shrunk toward the trait+position group when the cell is thin:
+<div class="formula">anchor = ( n &times; cellMean + 20 &times; groupMean ) / ( n + 20 )        n = players in the cell</div>
+Anchoring within position specifically was the first fix needed: an anchor built from development trait alone let the stretch quietly rebalance the league by position (kickers and punters lost 13.5 levels on average, quarterbacks gained 5.9), invisible in a league-wide summary and obvious within seconds in a per-player list.</li>
+<li><strong>Star billing.</strong> Within a cell, higher-star players sit higher. The part of a player's distance from the anchor explained by his star rating is measured jointly with the cell means (25 alternating passes: cell means net of star offsets, then star offsets net of cell means) and only <b>Star influence</b> (default 0.5) of it is kept, so the spread never widens the gap between star ratings on its own:
+<div class="formula">own    = offset[stars] &minus; mean of offset over the cell's rated players       (0 for a player with no rating)
+target = anchor + starWeight &times; own + stretch &times; ( original &minus; anchor &minus; own )</div>
+Everything not explained by stars is stretched by <b>Spread</b> (default 1.6 for the roster pass, 1.8 for recruits) away from the anchor. Stretching a player's whole distance from the anchor, without splitting out the star part first, was the version originally shipped, and it stretched the star gap right along with everything else: the recruit pass moved five-stars +4.3 to +4.9 and one-stars &minus;8.9 to &minus;10.3 a season, every season &mdash; the correlation between stars and ceiling even <i>fell</i> as this happened, because the added jitter looked like it was loosening the link, when the absolute gap was what had actually widened.</li>
+<li><strong>Luck.</strong> A draw fixed by who the player is, so it never re-rolls from season to season the way an unkeyed random draw once did (94% of rostered players' ceilings changed every season, by 6.1 levels on average, before this was fixed):
+<div class="formula">h    = SHA-1( seed + "|" + key )        key = identity (id, birthdate, position)
+u    = max( first 32 bits of h / 2^32, 1e-9 )        v = next 32 bits / 2^32
+luck = sqrt( &minus;2 ln u ) &times; cos( 2&pi; v )                 a standard normal, scaled by Randomness (default 5, roster; 6, recruits)</div></li>
+<li><strong>Re-centre.</strong> Shrinking an anchor toward the broader group leaves each cell a little off its own true mean, and the stretch multiplies that gap. Re-centring pulls every cell back onto its own original average afterward, so no trait, position or class moves as a whole: the roster mean held exactly (81.20 before and after) once this was added; before it, shrinkage alone had inflated the league by 1.3 levels, concentrated in Elites.</li>
+<li><strong>Program bias (roster pass only).</strong> Every program is scored once per pass from the game's own records &mdash; the Team row, the head coach it points at, and its purchased-upgrade row &mdash; ranked across the league rather than divided by a guessed maximum (an earlier version divided coach prestige by 7,000 when it tops out near 1,758, scoring the best coach in the country 0.09 of 1):
+<div class="formula">score = 0.40 &times; upgrades + 0.25 &times; coachLevel + 0.15 &times; coachPrestige + 0.20 &times; facilities
+upgrades      = mean rank of OffseasonProgression, IncreasePracticeWTRecovery, ReducePracticeInjury, SeasonHealthImpact
+coachLevel    = rank among CPU-coached programs; a user coach gets the share of CPU coaches below him, capped at 0.90
+facilities    = FacilitiesLevel / 4</div>
+Within each development trait, players are ranked by their program's score and the rank is mapped to &plusmn;<b>Program effect</b> (default 10) levels. A flat penalty for every top prospect at a weak program would make a Travis-Hunter-at-Colorado story impossible, so a <i>talent shield</i> blunts the downside for players who have already produced: production rank within position sets a shield strength, and a negative bias is scaled down by up to 90% for the best producers, with the cost of the protection charged to unshielded players so it isn't clawed back. At bottom-quartile programs the best producers lose 3.59 levels on average against 7.80 for the lowest producers.</li>
+<li><strong>Ceiling.</strong> A player pushed past 120 hands the excess to cell-mates who still have room, in proportion to their room, repeated until placed or the group is full. The cell's total is preserved exactly &mdash; before this, the recruit pass was simply discarding 0.447 levels per player at the 120 clamp.</li>
+<li><strong>Back into six groups.</strong> The rounded total is split across a player's own six groups in his original proportions, water-filled at 20 per group: a group that would overflow is pinned at 20 and the remainder re-spread, with largest-remainder rounding so the six always sum to the target exactly. The previous version simply discarded anything past 20 in a group instead of moving it &mdash; 2,117 levels across 979 players in one real save, the single largest loss in the whole pass.</li>
+<li><strong>Busts (roster pass only).</strong> A second fixed draw, at <b>Busts</b> odds (default 0.08, the same at every star rating), marks a player a bust: his ceiling is set to the lower of what the stretch gave him and his overall minus 25, and he gets no fuel. It exists because a five-star's ceiling averages about 112 of 120 &mdash; far above anything he reaches in college &mdash; so nothing else in the pass ever binds for him.</li>
+<li><strong>Breakout fuel (roster pass only).</strong> A raised ceiling alone buys almost nothing: a matched-block probe found a +10 skill-point grant worth +0.56 overall, while the same-sized XP grant was worth 0.00 (offseason XP handed out at Signing Day is discarded at training results). So the levels a season's cuts remove fund skill points for the players sent furthest above their own star rating's average:
+<div class="formula">budget = round( fuel &times; levelsCut + 1.0 &times; bustLevels )        skill points, 20 per player, biggest boom first
+boom   = raw &minus; ( anchor + starWeight &times; own )                     his own share, star-neutral by construction</div>
+<b>Breakout fuel</b> (default 0.4) is a budget, not a rate: fuel only ever added in early testing, so after three seasons the league average drifted 0.28 above vanilla purely from grants. Sizing the budget off the levels the pass itself removed holds the league average within about 0.05 of vanilla over three seasons at the shipped default.</li>
+<li><strong>Originals, kept once.</strong> Every season re-derives from a player's original ceiling, recorded the first time he is seen under this save's name and never again, so a second run reproduces the first instead of compounding.</li>
+</ol>
+
+<figure>
+  <div class="legend"><span><i style="background:var(--van)"></i>old behaviour (star influence 1.8)</span><span><i style="background:var(--mod)"></i>shipped default (0.5)</span></div>
+  <svg id="c-star-recruits" viewBox="0 0 640 260" role="img" aria-label="Ceiling change by star rating, recruit pass, old behaviour versus shipped default"></svg>
+  <figcaption>Average ceiling change by star rating, recruit pass dry run on the same week-0 class. At the old setting every star rating's gap from the others widened; at the shipped default of 0.5 the gap is roughly halved and the direction reverses &mdash; lower-rated recruits gain room, higher-rated ones give a little back. The correlation between stars and ceiling still falls at every setting (jitter adds noise); the absolute gap is what these bars show.</figcaption>
+</figure>
+
+<h2 id="regression">3. Regression Tool</h2>
+<p>At National Signing Day, before the roster pass, every rostered player gets a standing from three things added together, then ranked across the league:</p>
+<div class="formula">standing = paper + production + awards
+paper       overall against the average for his position, class and trait (falls back to position+trait when thin)
+production  this season, per game, ranked within position, worth up to &plusmn;8 (0 for a player with no snaps, not a penalty)
+awards      tiered: Heisman worth 4x XP / 10 standing points down to a conference player-of-the-week at 0.08x / 0.25; preseason picks worth zero</div>
+<p>The sum is then measured against the player's <b>billing</b>: what's typical for players with his position and recruiting star rating (shrunk toward star rating alone when that group is thin). <b>The billing comparison is not optional</b> &mdash; ranked raw, the first version of this tool made stars matter <i>more</i> after three seasons, not less, because every part of the raw judgement favoured blue-chips (their peer-group "paper" comparison most of all):</p>
+<div class="tbl"><table>
+<tr><th>Stars (count)</th><th class="n">Net tiers/100, raw</th><th class="n">Net tiers/100, vs billing</th></tr>
+<tr><td>5-star (75)</td><td class="n">+6.7</td><td class="n">+6.7</td></tr>
+<tr><td>4-star (837)</td><td class="n">+11.2</td><td class="n">+0.7</td></tr>
+<tr><td>3-star (4,319)</td><td class="n">+2.1</td><td class="n">+1.2</td></tr>
+<tr><td>2-star (1,799)</td><td class="n">&minus;2.6</td><td class="n">+0.1</td></tr>
+<tr><td>1-star (496)</td><td class="n">&minus;3.0</td><td class="n">+1.6</td></tr>
+</table></div>
+<figure>
+  <div class="legend"><span><i style="background:var(--van)"></i>ranked raw</span><span><i style="background:var(--mod)"></i>ranked against billing (shipped)</span></div>
+  <svg id="c-billing" viewBox="0 0 640 260" role="img" aria-label="Net development-trait tier moves per 100 players by star rating, raw versus against billing"></svg>
+  <figcaption>Net tier moves per 100 players of each star rating, one Training Results. League-wide net tier gain fell from +128 to +71 once every player was judged against what's typical for his own recruiting class, not the whole league.</figcaption>
+</figure>
+<p>What happens to a player, once judged against billing:</p>
+<div class="formula">slide chance     bottom of the league rolls against losing a development tier; a good program cuts the chance, a bad one raises it
+                 (~16% of at-risk players slid at top programs against ~49% at weak ones, default settings)
+coached up       would have slid at an average school, and didn't at his
+turnaround       a share of the coached-up (Turnarounds, default 0.15, likelier at better programs) gain a tier instead of just holding
+broke out        the top of the league can gain a tier outright (How often players break out, default 1.4); settled before "coached up",
+                 so a breakout is never recorded as a mere rescue</div>
+<p>Rewards: a coached-up player earns 5 skill points by default, a turnaround 1.5x that, a breakout half, and each award its tier multiplier times 3 (a Heisman worth 12). These used to be experience points, until the same offseason-XP-is-discarded finding from the Development Spread's probe showed the reward had no effect at all; skill points are spent at training results, worth about 0.06 overall each.</p>
+
+<h2 id="tested">4. Three seasons, measured</h2>
+<p>The method: three phases, all on save copies, with the user's normal mods and XP settings. Full run-by-run tables live in the parent project's <code>docs/design-decisions.md</code>; this section carries the headline results.</p>
+<p><b>Phase 1, does the ceiling actually bind?</b> 40 pairs of young players matched on position, class, trait and overall, one of each pair given a ceiling of 120 and the other 36, simmed fresh. After two seasons the high-ceiling player had won 37 of 37 pairs (t = 19.1, 95% range 5.44 to 6.72), and no ceiling was ever reset by the game. <b>The ceiling is a hard stop.</b></p>
+<p><b>Phase 2, how much does the sim wander on its own?</b> Three untouched copies of the same save, one season each: mean overall differed by 0.02, spread by 0.01, star-to-overall correlation by 0.004 (0.016 once recruits and players on no team are correctly excluded, and about 0.005 when the same rostered players are compared across copies). <b>League-wide numbers are extremely stable; single players are never evidence.</b></p>
+<p><b>Phases 3-6, does the thesis hold?</b> The aim: recruiting stars should predict a player's eventual overall less well than in an untouched dynasty, without moving the league average. The first attempt (run 1) failed it &mdash; stars predicted overall <i>better</i> than vanilla &mdash; and tracing it found two causes fixed in turn: the Regression Tool promoting blue-chips (section 3 above) and the Spread stretching the star gap (section 2 above). Runs 4-6 then added breakout fuel, a fuel budget instead of a free rate, and busts:</p>
+<div class="tbl"><table>
+<tr><th>At TR3 (rostered players)</th><th class="n">Vanilla</th><th class="n">Run 4 (fuel, uncapped)</th><th class="n">Run 5 (fuel budget)</th><th class="n">Run 6 (+ busts, shipped)</th></tr>
+<tr><td>Same-player star-to-overall vs vanilla</td><td class="n">&mdash;</td><td class="n">&minus;0.058</td><td class="n">&minus;0.050</td><td class="n"><b>&minus;0.072</b></td></tr>
+<tr><td>Rostered star-to-overall correlation</td><td class="n">0.665</td><td class="n">0.643</td><td class="n">0.648</td><td class="n">0.648</td></tr>
+<tr><td>Average overall</td><td class="n">72.70</td><td class="n">72.98</td><td class="n">72.65</td><td class="n">72.66</td></tr>
+<tr><td>Players at 90+</td><td class="n">200</td><td class="n">268</td><td class="n">232</td><td class="n">250</td></tr>
+<tr><td>Players under 65</td><td class="n">2,325</td><td class="n">2,244</td><td class="n">2,376</td><td class="n">2,384</td></tr>
+</table></div>
+<figure>
+  <div class="legend"><span><i style="background:var(--mod-soft);border:1px solid var(--mod)"></i>run 4</span><span><i style="background:var(--mod)"></i>run 5</span><span><i style="background:var(--target)"></i>run 6 (shipped)</span></div>
+  <svg id="c-thesis" viewBox="0 0 640 240" role="img" aria-label="Same-player star to overall correlation versus vanilla, by run and training results checkpoint"></svg>
+  <figcaption>Same-player star-to-overall correlation vs. an untouched twin dynasty, at each Training Results (TR). More negative means recruiting stars predict a player's eventual rating less well than in vanilla &mdash; the goal. Noise floor on this measure is about &plusmn;0.005; run 6's TR3 result is roughly fourteen times that.</figcaption>
+</figure>
+<figure>
+  <div class="legend"><span><i style="background:var(--van)"></i>vanilla</span><span><i style="background:var(--mod)"></i>run 6 (shipped)</span></div>
+  <svg id="c-tails" viewBox="0 0 640 220" role="img" aria-label="Players at 90 or better and under 65, vanilla versus run 6"></svg>
+  <figcaption>Rostered players at TR3. Both tails widen: more busts and more breakouts, which is the intended effect of stars mattering less on their own.</figcaption>
+</figure>
+<p><b>Verdict:</b> the shipped settings (Busts 0.08, Breakout fuel 0.4, Star influence 0.5) are the strongest result of the six runs on the thesis measure, with the league average still flat. They do not stop five-stars as a <i>group</i> from reaching 90+ (8% of ~150 five-stars is a handful, and the freed budget funds more raises for everyone), which is read as working as designed rather than a shortfall: both tails are supposed to widen.</p>
+
+<h2 id="assume">5. Assumptions and limits</h2>
+<p>Each entry says what was assumed or left unproven, and what it costs if wrong. Items marked verified were checked against real save data or in game.</p>
+<dl class="ledger">
+<div><dt>The season-stage mapping <span class="tag ok">verified on every test dynasty</span></dt><dd>Preseason week 0 runs the recruits pass; offseason stage (count &minus; 2) of (count) is read as National Signing Day; stage (count &minus; 1) as training results applied. Every test dynasty (runs 1-6, the noise-floor copies, vanilla) held 9 offseason stages and matched this mapping exactly. <b>Cost if wrong:</b> a league with a different stage count is read relative to its own count, which is untested; a manual override exists under Settings &gt; Advanced.</dd></div>
+<div><dt>Breakout fuel's rate and cap</dt><dd>1 skill point per level above billing (before the budget was added) and a 20-point-per-player cap were sized from a probe measuring +0.056 overall per point at +10 points. Whether a larger grant keeps that same rate per point was not tested.</dd></div>
+<div><dt>The fuel budget's default (0.4)</dt><dd>An estimate of the flat point from one season of run 4, kept because runs 5 and 6 held the league average within 0.05 of vanilla over three seasons at that setting. Other settings are unmeasured; a lower value trades some breakouts for a flatter average.</dd></div>
+<div><dt>Busts' 25-level margin and 1-point-per-lost-level rate</dt><dd>Read off the general growth-vs-ceiling-gap table and run 5's fuelled players, not independently derived. Run 6 confirmed the league average stays flat with busts on; the 1-point rate specifically is why 90+ players rose again in run 6 versus run 5, and it was accepted rather than re-tuned.</dd></div>
+<div><dt>Award weights, production weights, offensive-line weights, the talent shield's thresholds, and the Regression Tool's slide/breakout curves</dt><dd>All chosen by judgement, not derived from game data. Reasonable, but not measured against an independent standard of "should."</dd></div>
+<div><dt>CPU coach levels over a long dynasty</dt><dd>Whether they drift upward over many seasons hasn't been checked; would need a multi-season save kept purely to observe coach progression.</dd></div>
+<div><dt>A player's identity <span class="tag ok">verified</span></dt><dd><code>PresentationId</code> is not unique on its own (two pairs shared one in the main test save) and is reused across an offseason (a graduating senior's id is handed to an incoming freshman) &mdash; the source of an entirely spurious "regression" measurement early on, traced and fixed by keying on name plus age and position continuity instead. Both save tools now key a player's stored originals on id plus name.</dd></div>
+<div><dt>Coach and prestige fields needed a newer save schema <span class="tag ok">verified</span></dt><dd>The base schema resolves every Coach field to null; the newer one resolves all 138 head coaches correctly in the main test save. Missing this zeroed 40% of the program score for every team until found.</dd></div>
+<div><dt>Development-trait regression doesn't exist in vanilla CFB27 <span class="tag ok">verified</span></dt><dd>The trait only ever rises, about 100-115 of ~15,700 players a season (0.7%), all at training results. Earlier "regression windows" were the identity-reuse artifact above, not real drops. This is exactly the gap the Regression Tool exists to fill.</dd></div>
+<div><dt>Team index 255 is the practice team</dt><dd>Holds no upgrades and no real coach; excluded from the program-score ranking by that index specifically, not by name pattern.</dd></div>
+<div><dt>Offensive-line judging is incomplete</dt><dd>QB hits and pressures aren't recorded anywhere in the save, and penalties exist only as a team total, not per player. The Regression Tool's line judgement leans on sacks allowed, pancakes, and team-level rate stats instead.</dd></div>
+<div><dt>The Regression Tool needs a played season</dt><dd>A save taken mid-season holds only preseason and weekly awards, not full production, so its judgement is weaker there than at a season's actual end.</dd></div>
+<div><dt>Re-running is safe <span class="tag ok">verified</span></dt><dd>A second run against the same season re-derives from the same stored originals rather than compounding; proven with two real writes to a save copy, the second of which wrote zero players. Running past training results is refused outright, since the season key doesn't change there and a re-run would subtract skill points the game had already spent &mdash; tested by swapping a post-training-results save in under an unchanged name.</dd></div>
+</dl>
+
+<h2 id="oneapp">6. One app instead of two</h2>
+<p>This was two apps at first (the Development Spread and the Regression Tool), combined after testing showed every costly mistake in a real run &mdash; the roster pass run at preseason instead of signing day, a save already past training results mistaken for the signing-day state, a season nearly continued under a renamed save &mdash; came from a person choosing which tool and pass to run, and when, not from the maths itself. The app now reads that from the save's own <code>SeasonInfo</code>, decides the passes, and warns on exactly those three situations plus the game running.</p>
+<p><b>Checked before shipping:</b> on a real season-3 signing-day backup, the two old passes called in sequence and the new combined runner produced byte-identical saves and identical skill-point grants for all 7,528 players.</p>
+
+<h2 id="method">7. How it was tested</h2>
+<p><b>Matched runs.</b> Every in-game comparison starts from the same checkpoint save, advances through one season or Training Results with one thing changed, and compares results player by player, matched by name and age rather than by save id (which the game reuses across an offseason).</p>
+<p><b>Exactness before plumbing.</b> The Spread's overflow, allocation and re-centring maths were checked against thousands of randomised cases offline (40,007 for the overflow-allocation logic alone) before ever touching a real save, and the fixture self-test the build script runs (see <code>BUILDING.md</code>) checks the same kind of invariant &mdash; totals preserved exactly, ceilings never breached, a formula collapsing to the identity it's supposed to at its neutral settings &mdash; against the actual packaged code on every build.</p>
+<p><b>Byte-identical equivalence.</b> The merge from two apps into one (section 7) was checked byte-for-byte against the two original tools run in the correct order on a real save, not just spot-checked on a few players.</p>
+<p><b>Open items.</b> The stage-count mapping (section 5) and CPU coach drift over a long dynasty remain unproven beyond the test dynasties actually played; both are flagged rather than assumed silently.</p>
+
+<footer>Progression Tools, built and tested on the September 2026 game build. The full working notes, run-by-run tables and assumption log live in the parent project's <code>docs/design-decisions.md</code> and <code>docs/progression-mechanics.md</code>.</footer>
+</div>
+
+<script>
+(function(){
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (t, a, txt) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (txt != null) e.textContent = txt; return e; };
+  const font = 'IBM Plex Mono, Consolas, monospace';
+
+  // Grouped bar chart, adapted from AutoProgress's Method book to support signed values (several of
+  // this app's own measured effects are negative deltas, e.g. "ceiling change vs. a vanilla twin").
+  // groups = [{label, values:[{v, color, label?}], sub?}]
+  function bars(id, groups, opt) {
+    const svg = document.getElementById(id); if (!svg) return;
+    const W = 640, H = +svg.getAttribute('viewBox').split(' ')[3];
+    const padL = 46, padR = 12, padT = 18, padB = 40;
+    const allVals = groups.flatMap((g) => g.values.map((v) => v.v));
+    const hi = opt.max != null ? opt.max : Math.max(0, ...allVals) * 1.15;
+    const lo = opt.min != null ? opt.min : Math.min(0, ...allVals) * 1.15;
+    const gw = (W - padL - padR) / groups.length;
+    const ink = css('--ink'), ink2 = css('--ink-2'), rule = css('--rule');
+    const y = (v) => padT + (H - padT - padB) * (1 - (v - lo) / (hi - lo));
+    const zeroY = y(0);
+    const ticks = opt.ticks || 4;
+    for (let i = 0; i <= ticks; i++) {
+      const v = lo + (hi - lo) * (i / ticks);
+      svg.appendChild(el('line', { x1: padL, x2: W - padR, y1: y(v), y2: y(v), stroke: rule, 'stroke-width': 1 }));
+      svg.appendChild(el('text', { x: padL - 6, y: y(v) + 4, 'text-anchor': 'end', 'font-size': 11, fill: ink2, 'font-family': font }, opt.fmt ? opt.fmt(v) : Math.round(v)));
+    }
+    if (lo < 0 && hi > 0) svg.appendChild(el('line', { x1: padL, x2: W - padR, y1: zeroY, y2: zeroY, stroke: ink2, 'stroke-width': 1.5 }));
+    groups.forEach((g, gi) => {
+      const n = g.values.length, bw = Math.min(34, (gw - 16) / n), x0 = padL + gw * gi + (gw - bw * n) / 2;
+      g.values.forEach((v, vi) => {
+        const x = x0 + bw * vi;
+        const top = Math.min(y(v.v), zeroY), h = Math.max(Math.abs(y(v.v) - zeroY), 1);
+        const r = el('rect', { x, y: top, width: bw - 3, height: h, fill: v.color });
+        if (v.stroke) { r.setAttribute('stroke', v.stroke); r.setAttribute('stroke-width', 1.5); }
+        svg.appendChild(r);
+        const labelY = v.v >= 0 ? y(v.v) - 4 : y(v.v) + 13;
+        svg.appendChild(el('text', { x: x + (bw - 3) / 2, y: labelY, 'text-anchor': 'middle', 'font-size': 11, fill: ink, 'font-family': font }, v.label != null ? v.label : (opt.vfmt ? opt.vfmt(v.v) : v.v)));
+      });
+      const lab = el('text', { x: padL + gw * gi + gw / 2, y: H - padB + 16, 'text-anchor': 'middle', 'font-size': 12, fill: ink, 'font-family': 'IBM Plex Sans, system-ui, sans-serif' }, g.label);
+      svg.appendChild(lab);
+      if (g.sub) svg.appendChild(el('text', { x: padL + gw * gi + gw / 2, y: H - padB + 30, 'text-anchor': 'middle', 'font-size': 11, fill: ink2, 'font-family': font }, g.sub));
+    });
+  }
+  const mod = css('--mod'), van = css('--van'), tgt = css('--target'), soft = css('--mod-soft');
+
+  bars('c-star-recruits', [
+    { label: '5-star', values: [{ v: 4.9, color: van }, { v: -6.9, color: mod }] },
+    { label: '4-star', values: [{ v: 8.2, color: van }, { v: -4.2, color: mod }] },
+    { label: '3-star', values: [{ v: 3.6, color: van }, { v: -2.1, color: mod }] },
+    { label: '2-star', values: [{ v: -4.9, color: van }, { v: 1.5, color: mod }] },
+    { label: '1-star', values: [{ v: -10.3, color: van }, { v: 8.9, color: mod }] },
+  ], { ticks: 6, fmt: (v) => (v >= 0 ? '+' : '') + v.toFixed(0), vfmt: (v) => (v >= 0 ? '+' : '') + v.toFixed(1) });
+
+  bars('c-billing', [
+    { label: '5-star', values: [{ v: 6.7, color: van }, { v: 6.7, color: mod }] },
+    { label: '4-star', values: [{ v: 11.2, color: van }, { v: 0.7, color: mod }] },
+    { label: '3-star', values: [{ v: 2.1, color: van }, { v: 1.2, color: mod }] },
+    { label: '2-star', values: [{ v: -2.6, color: van }, { v: 0.1, color: mod }] },
+    { label: '1-star', values: [{ v: -3.0, color: van }, { v: 1.6, color: mod }] },
+  ], { ticks: 6, fmt: (v) => (v >= 0 ? '+' : '') + v.toFixed(0), vfmt: (v) => (v >= 0 ? '+' : '') + v.toFixed(1) });
+
+  bars('c-thesis', [
+    { label: 'TR1', values: [{ v: -0.007, color: soft, stroke: mod }, { v: -0.001, color: mod }, { v: -0.007, color: tgt }] },
+    { label: 'TR2', values: [{ v: -0.021, color: soft, stroke: mod }, { v: -0.021, color: mod }, { v: -0.023, color: tgt }] },
+    { label: 'TR3', values: [{ v: -0.058, color: soft, stroke: mod }, { v: -0.050, color: mod }, { v: -0.072, color: tgt }] },
+  ], { min: -0.08, max: 0.01, ticks: 4, fmt: (v) => v.toFixed(3), vfmt: (v) => v.toFixed(3) });
+
+  bars('c-tails', [
+    { label: 'players at 90+', values: [{ v: 200, color: van }, { v: 250, color: mod }] },
+    { label: 'players under 65', values: [{ v: 2325, color: van, label: '2,325' }, { v: 2384, color: mod, label: '2,384' }] },
+  ], { min: 0, max: 2700, ticks: 4, fmt: (v) => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : Math.round(v) });
+})();
+</script>

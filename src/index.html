@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Progression Tools</title>
+<style>
+  :root{
+    --field:#F4F6F2; --card:#FFFFFF; --ink:#16241C; --soft:#5C6F64; --rule:#D6DED5;
+    --turf:#1E6B3A; --turf-soft:#E5F1E8; --warn:#8A5A12; --warn-soft:#FBF0DA; --stop:#8F2D2D; --stop-soft:#F8E5E2;
+    --ink-accent:#1E6B3A; --accent-soft:#E5F1E8; --good:#2F6B4F; --good-soft:#E6F0EA;
+    --bad:#9A3324; --bad-soft:#F8E7E3; --hold:#8A6D1F; --hold-soft:#FAF2DC; --lift:#2A5C8A; --lift-soft:#E4EDF5;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --field:#0F1613; --card:#17211D; --ink:#E7EFE9; --soft:#9AB0A3; --rule:#27352E;
+      --turf:#63C68A; --turf-soft:#13271C; --warn:#E0AE63; --warn-soft:#2C2416; --stop:#E4958A; --stop-soft:#2E1B18;
+      --ink-accent:#63C68A; --accent-soft:#13271C; --good:#6FBF93; --good-soft:#15251C;
+      --bad:#E09184; --bad-soft:#2C1917; --hold:#D9B65E; --hold-soft:#29220F; --lift:#7FB1DC; --lift-soft:#141F2A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --field:#0F1613; --card:#17211D; --ink:#E7EFE9; --soft:#9AB0A3; --rule:#27352E;
+    --turf:#63C68A; --turf-soft:#13271C; --warn:#E0AE63; --warn-soft:#2C2416; --stop:#E4958A; --stop-soft:#2E1B18;
+    --ink-accent:#63C68A; --accent-soft:#13271C; --good:#6FBF93; --good-soft:#15251C;
+    --bad:#E09184; --bad-soft:#2C1917; --hold:#D9B65E; --hold-soft:#29220F; --lift:#7FB1DC; --lift-soft:#141F2A;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--field);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,sans-serif;padding-inline:20px}
+  .wrap{max-width:900px;margin:0 auto;padding-block:28px 60px}
+  h1{font-size:1.7rem;margin:0 0 2px}
+  .tagline{margin:0 0 10px;font-size:1rem;font-weight:600;color:var(--turf);letter-spacing:.01em}
+  .sub{color:var(--soft);margin:0 0 22px;max-width:64ch}
+  .panel{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+  h2{font-size:1.1rem;margin:0 0 10px}
+  h3{font-size:.98rem;margin:20px 0 8px}
+  label{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);font-weight:600;margin-bottom:4px}
+  label.check{display:flex;gap:9px;align-items:flex-start;text-transform:none;letter-spacing:0;font-size:.95rem;color:var(--ink);font-weight:600;margin:0;cursor:pointer}
+  label.check input{margin-top:4px}
+  label.check span.msg{display:block;font-weight:400}
+  select,input[type=number],input[type=text]{width:100%;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--field);color:var(--ink);font:inherit}
+  input[type=range]{width:100%}
+  .row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .row>div{flex:1;min-width:190px}
+  button{font:inherit;font-weight:600;padding:9px 18px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);cursor:pointer}
+  button.go{background:var(--turf);border-color:var(--turf);color:#fff}
+  button.danger{background:var(--stop);border-color:var(--stop);color:#fff}
+  button[disabled]{opacity:.45;cursor:not-allowed}
+  .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .msg{color:var(--soft);font-size:.9rem}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;margin-top:6px;font-variant-numeric:tabular-nums}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule)}
+  th{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--soft)}
+  tbody tr:last-child td{border-bottom:none}
+  th.n,td.n{text-align:right}
+  .note{border-left:3px solid var(--turf);background:var(--turf-soft);padding:10px 13px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.9rem}
+  .warn{border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 13px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.9rem}
+  .stop{border-left:3px solid var(--stop);background:var(--stop-soft);padding:10px 13px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.9rem}
+  .plan{border:1px solid var(--rule);border-radius:10px;padding:12px 16px;margin:0 0 14px;background:var(--field)}
+  .plan .where{font-size:1.05rem;font-weight:700}
+  .plan ol{margin:8px 0 2px;padding-left:22px}
+  .plan li{margin-bottom:3px}
+  .plan li.off{color:var(--soft);text-decoration:line-through}
+  .parts{display:flex;gap:18px;flex-wrap:wrap;margin:0 0 14px}
+  .parts>label{flex:1;min-width:260px;border:1px solid var(--rule);border-radius:10px;padding:10px 12px}
+  details.def,.def{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px 20px;margin:-6px 0 16px}
+  .def summary{cursor:pointer;font-weight:600;font-size:.94rem;list-style:none}
+  .def summary::-webkit-details-marker{display:none}
+  .def summary::before{content:"\25B8";display:inline-block;margin-right:8px;color:var(--turf);transition:transform .15s}
+  .def[open] summary::before{transform:rotate(90deg)}
+  .def p{font-size:.92rem;color:var(--soft);max-width:64ch;margin:10px 0 0}
+  .def p:last-child{margin-bottom:6px}
+  .settings{border:1px solid var(--rule);border-radius:10px;padding:10px 16px;margin:2px 0 14px;background:var(--field)}
+  .settings summary{cursor:pointer;font-weight:600;font-size:.88rem;list-style:none;color:var(--ink)}
+  .settings summary::-webkit-details-marker{display:none}
+  .settings summary::before{content:"\25B8";display:inline-block;margin-right:8px;color:var(--turf);transition:transform .15s}
+  .settings[open] summary::before{transform:rotate(90deg)}
+  .settings h4{margin:14px 0 8px;font-size:.86rem;text-transform:uppercase;letter-spacing:.06em;color:var(--turf)}
+  .awards{margin:10px 0 2px;border-top:1px solid var(--rule);padding-top:10px}
+  .awards summary{cursor:pointer;font-weight:600;font-size:.86rem;list-style:none;color:var(--ink-accent)}
+  .awards summary::-webkit-details-marker{display:none}
+  .awards summary::before{content:"\25B8";display:inline-block;margin-right:7px;transition:transform .15s}
+  .awards[open] summary::before{transform:rotate(90deg)}
+  .sub-h{font-size:.98rem;margin:22px 0 8px}
+  .steps,ol.steps{padding-left:20px;max-width:66ch;font-size:.92rem;color:var(--soft);margin:8px 0 14px}
+  .steps li{margin-bottom:7px}
+  .steps b,.tbl b,.tblwrap b{color:var(--ink)}
+  .tbl,.tblwrap{border:1px solid var(--rule);border-radius:10px;overflow-x:auto;margin:10px 0 4px}
+  .tbl table,.tblwrap table{margin:0;font-size:.89rem}
+  .tbl th,.tbl td,.tblwrap th,.tblwrap td{padding:9px 13px;vertical-align:top}
+  .tbl td,.tblwrap td{color:var(--soft)}
+  .tbl td:first-child,.tblwrap td:first-child{color:var(--ink);white-space:nowrap}
+  .up{color:var(--turf);font-weight:600}
+  .down{color:var(--stop);font-weight:600}
+  .plist td{white-space:nowrap}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:4px 0 6px}
+  .stat{border:1px solid var(--rule);border-radius:10px;padding:12px 14px}
+  .stat .v{font-size:1.5rem;font-weight:700;line-height:1.1}
+  .stat .k{font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);margin-top:3px}
+  .stat.reg{background:var(--bad-soft)} .stat.reg .v{color:var(--bad)}
+  .stat.cau{background:var(--lift-soft)} .stat.cau .v{color:var(--lift)}
+  .stat.pro{background:var(--good-soft)} .stat.pro .v{color:var(--good)}
+  .stat.tur{background:var(--hold-soft)} .stat.tur .v{color:var(--hold)}
+  .pill{display:inline-block;padding:1px 8px;border-radius:20px;font-size:.78rem;font-weight:600}
+  .pill.regressed{background:var(--bad-soft);color:var(--bad)}
+  .pill.coachedUp{background:var(--lift-soft);color:var(--lift)}
+  .pill.promoted{background:var(--good-soft);color:var(--good)}
+  .pill.turnaround{background:var(--hold-soft);color:var(--hold)}
+  .tabs{display:flex;gap:6px;margin:0 0 16px;border-bottom:1px solid var(--rule)}
+  .tabs button{background:none;border:none;border-bottom:2px solid transparent;border-radius:0;
+    padding:9px 14px;font-weight:600;font-size:.95rem;color:var(--soft);cursor:pointer}
+  .tabs button:hover{color:var(--ink)}
+  .tabs button[aria-selected="true"]{color:var(--turf);border-bottom-color:var(--turf)}
+  .spin{display:inline-block;width:11px;height:11px;border:2px solid var(--rule);border-top-color:var(--turf);border-radius:50%;animation:s .7s linear infinite;margin-right:7px;vertical-align:-1px}
+  @keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Progression Tools</h1>
+  <p class="tagline">Development Spread + Regression Tool</p>
+  <p class="sub">Stars stop deciding careers: ceilings are re-rolled, some blue-chips stall, some unknowns break out, and players who fall behind their billing can lose a development tier unless their coaching catches it. Pick your save; the app reads where it is in the season and runs what belongs there.</p>
+
+  <div class="tabs" role="tablist">
+    <button id="tabbtn-run" role="tab" aria-selected="true">Run it</button>
+    <button id="tabbtn-help" role="tab" aria-selected="false">How it works</button>
+  </div>
+
+  <div id="tab-run">
+  <div class="panel">
+    <div class="row">
+      <div><label>Dynasty save</label><select id="saveSel"></select></div>
+      <div style="flex:0;align-self:end;display:flex;gap:8px"><button id="refreshBtn">Refresh</button><button id="browseBtn">Browse...</button></div>
+    </div>
+
+    <div class="plan" id="planBox"><span class="msg">Choose a save.</span></div>
+
+    <div class="parts">
+      <label class="check"><input type="checkbox" id="useDS" checked><span>Development Spread<span class="msg">Ceilings, busts and breakout fuel. Recruits pass at preseason, roster pass at signing day.</span></span></label>
+      <label class="check"><input type="checkbox" id="useRT" checked><span>Regression Tool<span class="msg">Development traits and skill-point rewards, judged on the season just played. Signing day only.</span></span></label>
+    </div>
+
+    <details class="settings">
+      <summary>Settings <span class="msg" id="settingsSummary"></span></summary>
+      <h4>Development Spread</h4>
+      <div class="row">
+        <div><label>Spread <span class="msg" id="stretchOut">1.6</span></label><input type="range" id="stretch" min="1" max="3" step="0.1" value="1.6"></div>
+        <div><label>Star influence <span class="msg" id="starOut">0.5</span></label><input type="range" id="starWeight" min="0" max="1" step="0.1" value="0.5"></div>
+        <div><label>Randomness <span class="msg" id="jitterOut">5</span></label><input type="range" id="jitter" min="0" max="15" step="1" value="5"></div>
+      </div>
+      <div class="row">
+        <div><label>Program effect <span class="msg" id="envOut">10</span> <span class="msg">(roster pass)</span></label><input type="range" id="env" min="0" max="25" step="1" value="10"></div>
+        <div><label>Busts <span class="msg" id="bustOut">0.08</span> <span class="msg">(roster pass)</span></label><input type="range" id="bust" min="0" max="0.2" step="0.01" value="0.08"></div>
+        <div><label>Breakout fuel <span class="msg" id="fuelOut">0.4</span> <span class="msg">(roster pass)</span></label><input type="range" id="fuel" min="0" max="1.5" step="0.1" value="0.4"></div>
+      </div>
+      <p class="msg" style="margin:-6px 0 4px">Spread and Randomness default to 1.8 and 6 for the recruits pass and 1.6 and 5 for the roster pass; they switch when the save's stage is read.</p>
+      <h4>Regression Tool</h4>
+      <div class="row">
+        <div><label>How often players slip <span class="msg" id="sevOut">1.0</span></label><input type="range" id="sev" min="0" max="2" step="0.1" value="1"></div>
+        <div><label>How much the coach matters <span class="msg" id="coachOut">0.60</span></label><input type="range" id="coach" min="0" max="1" step="0.05" value="0.6"></div>
+        <div><label>How often players break out <span class="msg" id="promOut">1.4</span></label><input type="range" id="prom" min="0" max="3" step="0.1" value="1.4"></div>
+      </div>
+      <div class="row">
+        <div><label>Reward for being coached up <span class="msg" id="xpOut">5</span> skill points</label><input type="range" id="xp" min="0" max="15" step="1" value="5"></div>
+        <div><label>Reward per award won <span class="msg" id="awOut">3</span> skill points</label><input type="range" id="aw" min="0" max="10" step="1" value="3"></div>
+        <div><label>Turnarounds <span class="msg" id="turnOut">0.15</span></label><input type="range" id="turn" min="0" max="0.6" step="0.05" value="0.15"></div>
+      </div>
+      <details class="awards">
+        <summary>What each award is worth</summary>
+        <p class="msg" style="margin:8px 0 0">Every honour multiplies the <b>Reward per award won</b> setting, and carries its own weight when judging whether a player is living up to his billing. Preseason selections are predictions rather than results, so they count for nothing on either side.</p>
+        <div class="tblwrap" style="margin-top:10px"><table>
+          <thead><tr><th>Award</th><th class="n">Skill points</th><th class="n">Counts toward his standing</th></tr></thead>
+          <tbody>
+            <tr><td><b>Heisman</b></td><td class="n">&times;4.0</td><td class="n">10</td></tr>
+            <tr><td>Player of the Year / Best Player</td><td class="n">&times;3.0</td><td class="n">8</td></tr>
+            <tr><td>Freshman of the Year, best at a position</td><td class="n">&times;2.0</td><td class="n">6</td></tr>
+            <tr><td>1st Team All-American</td><td class="n">&times;1.5</td><td class="n">5</td></tr>
+            <tr><td>Led the nation in a statistic</td><td class="n">&times;1.25</td><td class="n">4</td></tr>
+            <tr><td>2nd Team / Freshman All-American</td><td class="n">&times;1.0</td><td class="n">3</td></tr>
+            <tr><td>1st Team All-Conference</td><td class="n">&times;0.6</td><td class="n">2</td></tr>
+            <tr><td>2nd Team / Freshman All-Conference</td><td class="n">&times;0.4</td><td class="n">1</td></tr>
+            <tr><td>Academic</td><td class="n">&times;0.2</td><td class="n">0</td></tr>
+            <tr><td>Player of the week</td><td class="n">&times;0.15</td><td class="n">0.5</td></tr>
+            <tr><td>Conference player of the week</td><td class="n">&times;0.08</td><td class="n">0.25</td></tr>
+            <tr><td><b>Preseason selection</b></td><td class="n"><b>0</b></td><td class="n"><b>0</b></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+      <h4>Both</h4>
+      <div class="row">
+        <div style="flex:0"><label>Seed</label><input type="number" id="seed" value="27" style="width:100px"></div>
+      </div>
+      <p class="msg" style="margin:0 0 4px">Defaults are tuned already; the How it works tab explains each one.</p>
+      <h4>Advanced</h4>
+      <label class="check"><input type="checkbox" id="override"><span>Choose the passes myself<span class="msg">Only for a league whose stages don't read the way this app expects. The tools still refuse to run after training results.</span></span></label>
+      <div class="row" id="overrideRow" hidden style="margin-top:10px">
+        <div><label>Run as if the save were at</label>
+          <select id="overridePhase">
+            <option value="preseason">First day of the year: recruits pass</option>
+            <option value="nsd">National Signing Day: Regression Tool, then roster pass</option>
+          </select>
+        </div>
+      </div>
+    </details>
+
+    <div class="actions">
+      <button class="go" id="previewBtn" disabled>Preview</button>
+      <button class="danger" id="applyBtn" disabled>Apply to save</button>
+      <span class="msg" id="msg"></span>
+    </div>
+  </div>
+
+  <div class="panel" id="rtPanel" hidden>
+    <h2 id="rtTitle"></h2>
+    <div id="rtResults"></div>
+  </div>
+  <div class="panel" id="rtPlayersPanel" hidden>
+    <h2>Regression Tool: who moved</h2>
+    <div class="row">
+      <div><label>Find</label><input type="text" id="rtFilter" placeholder="player, team, position"></div>
+      <div style="flex:0;min-width:170px"><label>Show</label>
+        <select id="rtOutcome">
+          <option value="all">Everyone who moved</option>
+          <option value="regressed">Slid a tier</option>
+          <option value="coachedUp">Coached up</option>
+          <option value="turnaround">Turned around</option>
+          <option value="promoted">Broke out</option>
+        </select>
+      </div>
+      <div style="flex:0;align-self:end"><button id="rtCsvBtn">Export full list (CSV)</button></div>
+    </div>
+    <p class="msg" id="rtCount"></p>
+    <div style="overflow-x:auto"><table class="plist">
+      <thead><tr><th>Player</th><th>Pos</th><th>Year</th><th>Team</th><th class="n">Ovr</th><th class="n">Expected</th><th class="n">Prod</th><th class="n">Awards</th><th>Was</th><th>Now</th><th>Outcome</th><th class="n">Skill pts</th></tr></thead>
+      <tbody id="rtBody"></tbody>
+    </table></div>
+  </div>
+
+  <div class="panel" id="dsPanel" hidden>
+    <h2 id="dsTitle"></h2>
+    <div id="dsResults"></div>
+  </div>
+  <div class="panel" id="dsPlayersPanel" hidden>
+    <h2>Development Spread: every player it changed</h2>
+    <p class="msg" style="margin:0 0 12px">Caps are shown as skill-tree levels out of 120. Sorted by the biggest movers, so anything that went somewhere silly shows up first.</p>
+    <div class="row">
+      <div><label>Find</label><input type="text" id="dsFilter" placeholder="player, team or position"></div>
+      <div style="flex:0;min-width:180px"><label>Sort by</label>
+        <select id="dsSort">
+          <option value="abs">Biggest change</option>
+          <option value="gain">Biggest gains</option>
+          <option value="loss">Biggest losses</option>
+          <option value="after">Highest ceiling</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
+      <div style="flex:0;align-self:end"><button id="dsCsvBtn">Export full list (CSV)</button></div>
+    </div>
+    <p class="msg" id="dsCount"></p>
+    <div style="overflow-x:auto"><table class="plist">
+      <thead><tr><th>Player</th><th>Pos</th><th class="n">Ovr</th><th>Dev</th><th>Team</th><th class="n">Before</th><th class="n">After</th><th class="n">Change</th></tr></thead>
+      <tbody id="dsBody"></tbody>
+    </table></div>
+  </div>
+  </div>
+
+  <div id="tab-help" hidden>
+  <div class="panel">
+    <h2>When to run it</h2>
+    <p class="msg" style="max-width:66ch">Twice a season. The app reads where your save is and runs only what belongs there, so you never pick a pass.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>When</th><th>What runs</th></tr></thead>
+      <tbody>
+        <tr><td><b>First day of the year</b><br><span class="msg">preseason, week 0</span></td>
+          <td>Development Spread's <b>recruits pass</b>: this year's incoming class gets its ceilings, before anyone has played for anyone.</td></tr>
+        <tr><td><b>National Signing Day</b><br><span class="msg">after the season, before training results</span></td>
+          <td>The <b>Regression Tool</b> judges the season just played and moves development traits, then Development Spread's <b>roster pass</b> sets ceilings, busts and breakout fuel for everyone on a roster. In that order, because the roster pass compares players with others of the same development trait. Training results, the next screen in the game, is when the offseason XP and skill points are spent, so the changes have to be in place before it.</td></tr>
+        <tr><td><b>Anything else</b></td>
+          <td>Nothing runs, and the app says where the save is instead. After training results it is too late for that season.</td></tr>
+      </tbody>
+    </table></div>
+    <h3 class="sub-h">Each time</h3>
+    <ol class="steps">
+      <li><b>Save at the right point</b> (first day of the year, or National Signing Day) under your dynasty's usual name.</li>
+      <li><b>Quit to the main menu.</b> With the dynasty loaded, the game keeps its own copy and saves it over the changes.</li>
+      <li><b>Preview, then Apply</b> here.</li>
+      <li><b>Load your manual save</b>, not the autosave, which is older than the changes.</li>
+    </ol>
+    <div class="warn"><b>Keep the same save name all dynasty.</b> The app remembers each player's original ceiling and this season's skill-point grants under the save's name. Under a new name it would start over from values it already changed, and pay this season's grants twice. It warns you if a save past its first season has no records.</div>
+  </div>
+
+<details class="def">
+    <summary>What a ceiling is</summary>
+    <p>Every player's skill tree is split into <b>six skill groups</b>. A cornerback's are Man Coverage, Zone
+    Coverage, Quickness, Hands, Power and Run Stopping; a quarterback's are different ones. Each group can be
+    upgraded up to <b>20 levels</b>, so 120 levels is a completely full tree.</p>
+    <p>When a player is created the game rolls a separate limit for each of his six groups &mdash; one player can
+    take Quickness to 18 but Hands only to 9. Those limits are fixed for his whole career. They are not a
+    balance that runs down as he improves; they are the ceiling he is improving <i>toward</i>. However much he
+    plays and however much XP he earns, he stops there.</p>
+    <p>That ceiling is what this tool changes, plus, in the roster pass, a grant of skill points so a raised ceiling can actually be used. The percentages below are how full a player's tree is
+    allowed to get: <b>60% means he can reach 72 of the 120 possible levels</b>, and nothing will ever take him
+    past it. It says nothing about how good he is today &mdash; a 78 overall senior who is nearly maxed out and a
+    78 overall freshman with room to spare can have the same rating and completely different futures.</p>
+  </details>
+
+  <div class="panel">
+    <h2>Development Spread: how it works</h2>
+    <p class="msg" style="max-width:66ch">Every player's six skill-group limits add up to one number out of 120 &mdash; his ceiling. The tool rebuilds that number, then splits it back across his six groups <b>in the proportions he already has</b>, so a speed-heavy back stays speed-heavy. Only the size of the ceiling moves, never its shape.</p>
+    <p class="msg" style="max-width:66ch">Each player's ceiling is built in seven steps:</p>
+    <ol class="steps">
+      <li><b>Find the average for players like him &mdash; same development trait, same position, same class.</b> All three matter. Elite players average a far higher ceiling than Normal ones; ceilings are strongly positional besides, with quarterbacks averaging about 90 of the 120 levels against 74 for offensive linemen; and the classes differ again, because the players who stick around are the ones who had the most ceiling left. So an Elite junior quarterback is measured against other Elite junior quarterbacks. That average is the anchor and it holds still, which is why no trait, position or class comes out stronger or weaker than it went in.</li>
+      <li><b>Separate his stars from himself.</b> Within any group of players like him, the game hands higher-star recruits higher ceilings. That part of his distance from the average is his recruiting billing, and it is scaled down rather than stretched. This is <b>Star influence</b>: at 0.5 the ceiling gap between star ratings is halved, so a one-star's future is less settled by his ranking.</li>
+      <li><b>Push the rest of him away from that average.</b> Whatever is left, the part that is him rather than his star rating, is stretched: a player above his billing goes further above, one below goes further below. Every star rating gets the same wider range of outcomes. This is <b>Spread</b>.</li>
+      <li><b>Add luck.</b> A random nudge up or down, different for every player. This is <b>Randomness</b>.</li>
+      <li><b>Let some careers stall.</b> Roster pass only. A blue-chip's ceiling sits so far above anything he reaches in college that no amount of stretching ever stops him. So a small share of players, the same odds at every star rating, draw a bust: their ceiling drops to well below their current overall, and they barely improve from then on. The draw belongs to the player, so a bust stays a bust. This is <b>Busts</b>.</li>
+      <li><b>Give the breakouts something to spend.</b> Roster pass only. A higher ceiling on its own does almost nothing: most players never get near theirs, and what holds them back is how many skill points they have to spend. So the players the stretch sends furthest above their star rating's average get 20 skill points each, which the game spends at training results: about +1 overall a season, every season, because a player's luck stays with him. This is <b>Breakout fuel</b>. The league's budget is tied to how much ceiling the pass cut, so growth the cuts take away is handed to the breakouts rather than added on top, and the league's average stays put. It goes by each player's own share of the stretch, not his school, so in a test the recruits who got it were mostly one- to three-stars with hidden upside.</li>
+      <li><b>Add his program.</b> Roster pass only. Each player is ranked against others of his own development trait by how well run his school is, so a good program lifts him relative to players of his calibre without lifting his whole tier. This is <b>Program effect</b>.</li>
+    </ol>
+    <div class="note"><b>A player who performs can outrun a bad program.</b> The penalty for playing somewhere poorly run shrinks the further a player stands above his peers &mdash; measured by what he actually produced on the field this season, per game and ranked within his own position. The best player in the country at a weak school keeps nearly all of his ceiling; an ordinary player there does not. Players with no snaps on record are judged on their ceiling instead, since they have no season to be read.</div>
+    <div class="note"><b>Nothing is thrown away.</b> A group cannot pass 20 levels and a player cannot pass 120, but when the maths asks for more it flows somewhere rather than vanishing: past-20 overflow moves into his other groups, and a player pinned at 120 hands the remainder to players like him who still have room. Every group's average is preserved exactly.</div>
+    <div class="note"><b>Kickers, punters and long snappers sit it out.</b> Their ceilings are untouched, and they are not counted in any number on this page.</div>
+
+    <h3 class="sub-h">What each slider does</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Setting</th><th>Turning it up</th><th>Turning it down</th></tr></thead>
+      <tbody>
+        <tr><td><b>Spread</b><br><span class="msg">1.0 &ndash; 3.0</span></td>
+          <td>Stretches the gap between high- and low-ceiling players. At <b>2.0</b> a player who was 10 levels above his trait's average ends up 20 above. Busts and breakouts both get more extreme.</td>
+          <td>At <b>1.0</b> nothing stretches at all &mdash; only Randomness and Program effect move anyone.</td></tr>
+        <tr><td><b>Star influence</b><br><span class="msg">0 &ndash; 1</span></td>
+          <td>At <b>1</b> the ceiling gap between star ratings stays exactly as the game generated it; the tool widens outcomes within each star rating but not between them.</td>
+          <td>At <b>0</b> star rating says nothing about a player's ceiling. At the default <b>0.5</b> the gap is halved: in a test class, four-stars' average ceiling fell about 4 levels and one-stars' rose about 9.</td></tr>
+        <tr><td><b>Randomness</b><br><span class="msg">0 &ndash; 15</span></td>
+          <td>Adds pure luck on top. The number is roughly how many levels a typical player gets nudged; about 1 player in 20 moves double that. Makes two identical prospects turn out differently.</td>
+          <td>At <b>0</b> the result is pure arithmetic &mdash; the same trait and the same starting ceiling always give the same answer.</td></tr>
+        <tr><td><b>Program effect</b><br><span class="msg">0 &ndash; 25, roster pass only</span></td>
+          <td>How much the school matters. The number is the most a team can add or subtract: at <b>10</b>, the best programs give about +10 levels and the worst about &minus;10, with players ranked against others of their own development trait so no trait's average moves.</td>
+          <td>At <b>0</b> school is ignored entirely and the roster pass behaves like the recruit pass.</td></tr>
+        <tr><td><b>Busts</b><br><span class="msg">0 &ndash; 0.2, roster pass only</span></td>
+          <td>The share of rostered players who draw a bust, at every star rating alike. A bust's ceiling is set 25 levels below his overall, which in testing held players to well under a point a season against three to four normally. The levels busts lose are handed to the breakouts, so the league's average holds. At <b>0.08</b>, about 1 in 12.</td>
+          <td>At <b>0</b> nobody busts, and a five-star is almost impossible to stop.</td></tr>
+        <tr><td><b>Breakout fuel</b><br><span class="msg">0 &ndash; 1.5, roster pass only</span></td>
+          <td>The league's skill point budget, per ceiling level the pass cut. At <b>0.4</b> about 530 players a season get 20 points each (about +1 overall a season); the estimate is that this hands back roughly what the cuts take away. Higher values make more breakouts but raise the league's average: at about <b>1.5</b>, a three-season test ended with a third more 90+ players than an untouched dynasty.</td>
+          <td>At <b>0</b> nobody gets skill points and a raised ceiling is only room to grow. If you raise it, consider lowering your in-game XP setting to compensate.</td></tr>
+        <tr><td><b>Seed</b></td>
+          <td colspan="2">Chooses which random numbers get used. The same seed and the same settings always produce the exact same league, so you can preview, close, come back and get the identical result. Change it to re-roll everything.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 class="sub-h">How a school's score is built</h3>
+    <p class="msg" style="max-width:66ch">The roster pass rates every program on four things: <b>the equipment and support staff it has bought</b> (40%), <b>head coach level</b> (25%), <b>facility tier</b> (20%) and <b>coach prestige</b> (15%). What a school has actually paid for counts most; a nice building with no staff and a poor coach counts least.</p>
+    <p class="msg" style="max-width:66ch">Each of those four is <b>ranked against every other program</b> before the weights are applied, and the school's final score is ranked too. Ranking matters because early in a dynasty most CPU teams have bought nothing, so scoring them on raw numbers would hand your team a runaway advantage simply for being the only one investing. It also means the weights above are honest: nothing rests on guessing what counts as a "good" coach rating.</p>
+    <p class="msg" style="max-width:66ch">A user coach is ranked on the same 1&ndash;100 level scale as CPU coaches, by the share of CPU head coaches below him, and capped just short of the top so a maxed-out user is among the best rather than automatically first. A new user coach starts low on this part of the score and climbs as he levels up.</p>
+  </div>
+
+<details class="def">
+    <summary>What the Regression Tool changes</summary>
+    <p>Every player carries a <b>development trait</b>: Normal, Impact, Star or Elite. It's the single biggest factor in how fast he improves, and in a normal dynasty it's close to permanent &mdash; the label a player is assigned as a recruit is the label he retires with.</p>
+    <p>This makes it a verdict that gets revisited. A player who has fallen well behind others of his position, class and trait can drop a tier. A player well ahead of them can gain one. <b>Only that one field is ever written.</b> Nobody's ratings move, so nothing changes on the field the moment you run it &mdash; what changes is who's still improving in two years and who has quietly stopped.</p>
+  </details>
+
+  <div class="panel">
+    <h2>Regression Tool: how it works</h2>
+    <ol class="steps">
+      <li><b>Work out what he should be.</b> A player is measured against the company he keeps: the average overall of players at his position, in his class, with his development trait. A junior Star quarterback sitting at 71 where junior Star quarterbacks average 82 is a career not going the way its billing said it would.</li>
+      <li><b>Look at what he actually did.</b> His season is read from the save &mdash; snaps, starts and production, scored per game and ranked against others at his position, so a lineman and a quarterback are never compared in the same units. That standing is worth up to eight rating points either way on top of the paper comparison, which is what separates a starter carrying a team from a backup with the same rating. A player with no snaps on record is judged on the paper comparison alone rather than marked down for a season he never had.</li>
+      <li><b>Count the trophies.</b> Awards are the hardest evidence in the save that a player produced, and they are weighted by what they are: a Heisman counts far more than a conference player-of-the-week, and preseason selections count for nothing, being predictions rather than results.</li>
+      <li><b>Hold him to his billing.</b> Blue-chips start with every advantage: more snaps, bigger numbers, more trophies. So the combined standing is measured against what is typical for players with his position and recruiting star rating. A one-star who outplays other one-stars is a breakout; a five-star merely playing like a five-star is not. Without this, the tool would keep promoting the players recruiting rankings already favoured.</li>
+      <li><b>Rank everyone by the whole picture.</b> The further behind that combined standing puts a player, the higher his chance of losing a tier. The bottom of the league is genuinely exposed, the middle barely, the top not at all.</li>
+      <li><b>Ask who coaches him.</b> A strong program cuts that chance sharply, a weak one raises it. A player who would have slid at an average school and does not at his is reported as <b>coached up</b> &mdash; that is the point of the whole thing.</li>
+      <li><b>Let some of those turn all the way around.</b> A share of coached-up players do not merely hold their tier, they gain one: the staff reverses the slide instead of stopping it. Better programs land it more often.</li>
+      <li><b>Let the best rise.</b> Players well clear of their peers can gain a tier outright, and a good program makes that likelier too, so coaching is rewarded rather than being only damage control.</li>
+      <li><b>Pay out skill points.</b> Being coached up is worth real skill points, so a staff noticing a player was slipping shows up on the player. A turnaround pays half again on top of the tier it carries, a breakout pays half, and every award pays on its own scale regardless of what the roll did. The game spends them at training results; in a test, 10 extra skill points bought about +0.6 overall.</li>
+    </ol>
+    <div class="note"><b>Only the development trait and skill points are written.</b> Ratings, ceilings, positions, injuries and everything else are untouched, so nothing changes on the field the moment the pass runs. What changes is who is still improving in two years.</div>
+
+    <h3>What each slider does</h3>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Setting</th><th>Turning it up</th><th>Turning it down</th></tr></thead>
+      <tbody>
+        <tr><td><b>How often players slip</b></td>
+          <td>More players lose a tier. At <b>2.0</b> the worst performers in the league are close to a coin flip.</td>
+          <td>At <b>0</b> nobody ever slides and only breakouts happen.</td></tr>
+        <tr><td><b>How much the coach matters</b></td>
+          <td>Widens the gap between a good program and a bad one, and makes turnarounds likelier at the good ones. At <b>0.6</b>, roughly <b>15%</b> of at-risk players slide at top programs against about <b>40%</b> at weak ones.</td>
+          <td>At <b>0</b> the school is ignored and it's pure performance.</td></tr>
+        <tr><td><b>How often players break out</b></td>
+          <td>More players gain a tier. At <b>1.4</b> the league gains slightly more tiers than it loses.</td>
+          <td>At <b>0</b> nobody is ever promoted and the league only declines.</td></tr>
+        <tr><td><b>Reward for being coached up</b></td>
+          <td>More skill points for a player whose staff pulled him out of a slide. This is the tangible half of the feature &mdash; at <b>0</b> being coached up is invisible and only prevents harm.</td>
+          <td>For scale: most players hold 0&ndash;3 skill points, and 10 bought about +0.6 overall in a test, so 5 is a real but not absurd bump.</td></tr>
+        <tr><td><b>Turnarounds</b></td>
+          <td>How many coached-up players gain a tier rather than only holding. At <b>0.6</b> most rescues become genuine reversals.</td>
+          <td>At <b>0</b> a coached-up player keeps his tier and nothing more.</td></tr>
+        <tr><td><b>Reward per award won</b></td>
+          <td>The base skill points an award pays. Each honour multiplies it &mdash; a Heisman is worth four times this, a conference second team four tenths &mdash; so at <b>3</b> a Heisman pays 12. A player's honours are added up before rounding.</td>
+          <td>At <b>0</b> awards still count toward whether a player is judged to be slipping, but pay nothing.</td></tr>
+        <tr><td><b>Seed</b></td>
+          <td colspan="2">Same seed and settings always produce the same result, so you can preview, close, come back and get an identical outcome. Change it to re-roll.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>How a school is judged</h3>
+    <p class="msg" style="max-width:66ch">Four things, ranked against every other program rather than scored absolutely: <b>what the school has bought</b> (equipment and support staff, 40%), <b>head coach level</b> (25%), <b>facility tier</b> (20%) and <b>coach prestige</b> (15%). Ranking matters because early in a dynasty most CPU teams have bought nothing, and an absolute score would hand your own program a runaway advantage just for being the only one investing.</p>
+    <p class="msg" style="max-width:66ch">A user coach is ranked on the same 1&ndash;100 level scale as CPU coaches, by the share of CPU head coaches below him, and capped just short of the top so a maxed-out user is among the best rather than automatically first. A new user coach starts low on this part of the score and climbs as he levels up.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Before you apply</h2>
+    <div class="warn"><b>Go to the main menu or close the game first.</b> If the dynasty is loaded, the game saves its own copy over the changes. The app warns you when the game is running, but it can't tell the main menu from a loaded dynasty.</div>
+    <div class="note">Your save is backed up automatically before each pass writes, into a <b>Dynasty Backups</b> folder right next to this program. Move the program folder wherever you like and its backups go with it.</div>
+    <div class="note"><b>Re-running is safe.</b> Each player's original ceiling and the traits he started the season with are remembered, so running again with different settings re-derives from those instead of piling on top. Advancing to a new season starts fresh, so a player who slid last year can slide again this year. Those records live in Documents\CFB 27 Modding\cache.</div>
+  </div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pct = (v) => Math.round((v / 120) * 100) + '%';
+const STEPS = { preseason: ['recruits'], nsd: ['regression', 'roster'] };
+const STEP_NAME = {
+  recruits: "Development Spread: this year's recruits (ceilings)",
+  regression: 'Regression Tool: development traits and skill-point rewards',
+  roster: 'Development Spread: everyone on a roster (ceilings, busts, breakout fuel)',
+};
+let info = null, gameIsRunning = false, inspecting = 0;
+
+// --- save list and the season read -----------------------------------------
+async function refreshSaves() {
+  const d = await window.dd.listSaves();
+  $('saveSel').innerHTML = d.files.map((f) => `<option value="${f.path.replace(/"/g, '&quot;')}">${esc(f.name)}${f.autosave ? ' (autosave)' : ''}</option>`).join('')
+    || '<option value="">no dynasty saves found</option>';
+  inspectSave();
+}
+
+async function inspectSave() {
+  const save = $('saveSel').value;
+  clearResults();
+  info = null;
+  if (!save) { $('planBox').innerHTML = '<span class="msg">Choose a save.</span>'; updateButtons(); return; }
+  const mine = ++inspecting;
+  $('planBox').innerHTML = '<span class="msg"><span class="spin"></span>reading where this save is in the season...</span>';
+  updateButtons();
+  const r = await window.dd.inspect(save);
+  if (mine !== inspecting) return;   // the user picked another save meanwhile
+  if (!r.ok) { $('planBox').innerHTML = `<div class="stop">Could not read this save: ${esc(r.error)}</div>`; updateButtons(); return; }
+  info = r.info; gameIsRunning = r.gameRunning;
+  applyPassDefaults();
+  renderPlan();
+}
+
+function phase() { return $('override').checked ? $('overridePhase').value : (info && info.phase); }
+function plannedSteps() {
+  return (STEPS[phase()] || []).map((s) => ({
+    step: s, on: s === 'regression' ? $('useRT').checked : $('useDS').checked,
+  }));
+}
+function stepsToRun() { return plannedSteps().filter((s) => s.on).map((s) => s.step); }
+
+// Spread and Randomness have different tuned defaults for the two passes.
+function applyPassDefaults() {
+  const roster = phase() === 'nsd';
+  $('stretch').value = roster ? 1.6 : 1.8; $('stretchOut').textContent = $('stretch').value;
+  $('jitter').value = roster ? 5 : 6; $('jitterOut').textContent = $('jitter').value;
+  settingsSummary();
+}
+
+function renderPlan() {
+  if (!info) return;
+  const steps = plannedSteps();
+  const autosave = /-AUTOSAVE$/i.test(info.name);
+  const noRecords = (info.warnings || []).find((w) => w.kind === 'noRecords');
+  let h = `<div class="where">${esc(info.name)}: ${esc(info.label)}</div><div class="msg">${esc(info.detail)}</div>`;
+  if ($('override').checked) h += `<div class="warn">Manual override: running as if the save were at ${phase() === 'nsd' ? 'National Signing Day' : 'the first day of the year'}.</div>`;
+  if (steps.length) {
+    h += '<ol>' + steps.map((s) => `<li class="${s.on ? '' : 'off'}">${STEP_NAME[s.step]}${s.on ? '' : ' (turned off)'}</li>`).join('') + '</ol>';
+    if (!stepsToRun().length) h += '<div class="msg">Both tools that run here are turned off.</div>';
+    if (phase() === 'nsd' && steps.every((s) => s.on)) h += '<div class="msg">The preview shows each pass on the save as it is now. On Apply the roster pass runs after the Regression Tool and sees its new traits, so its numbers shift slightly.</div>';
+  }
+  if (gameIsRunning) h += '<div class="warn"><b>The game is running.</b> Make sure it is at the main menu, not in this dynasty, or it will save over the changes.</div>';
+  if (autosave) h += '<div class="warn"><b>This is an autosave.</b> Run on your manual save and load that afterwards; the game can replace an autosave at any time.</div>';
+  if (noRecords && steps.length) h += `<div class="stop">${esc(noRecords.text)}<label class="check" style="margin-top:8px"><input type="checkbox" id="confirmNew"><span>This dynasty has never been run through these tools</span></label></div>`;
+  $('planBox').innerHTML = h;
+  const c = $('confirmNew');
+  if (c) c.onchange = updateButtons;
+  updateButtons();
+}
+
+function updateButtons() {
+  const ready = !!info && stepsToRun().length > 0;
+  $('previewBtn').disabled = !ready;
+  if (!ready) $('applyBtn').disabled = true;
+}
+
+// --- settings --------------------------------------------------------------
+const sliders = [
+  ['stretch', 'stretchOut', (v) => v], ['starWeight', 'starOut', (v) => v], ['jitter', 'jitterOut', (v) => v],
+  ['env', 'envOut', (v) => v], ['bust', 'bustOut', (v) => v], ['fuel', 'fuelOut', (v) => v],
+  ['sev', 'sevOut', (v) => Number(v).toFixed(1)], ['coach', 'coachOut', (v) => Number(v).toFixed(2)],
+  ['prom', 'promOut', (v) => Number(v).toFixed(1)], ['xp', 'xpOut', (v) => v], ['aw', 'awOut', (v) => v],
+  ['turn', 'turnOut', (v) => Number(v).toFixed(2)],
+];
+for (const [id, out, fmt] of sliders) $(id).oninput = () => { $(out).textContent = fmt($(id).value); settingsSummary(); };
+$('seed').oninput = settingsSummary;
+function settingsSummary() {
+  $('settingsSummary').textContent = '- spread ' + $('stretch').value + ', stars ' + $('starWeight').value + ', busts ' + $('bust').value +
+    ', fuel ' + $('fuel').value + ', slips ' + Number($('sev').value).toFixed(1) + ', coach ' + Number($('coach').value).toFixed(2) +
+    ', seed ' + $('seed').value;
+}
+const settings = () => ({
+  stretch: Number($('stretch').value), starWeight: Number($('starWeight').value), jitter: Number($('jitter').value),
+  envSwing: Number($('env').value), bust: Number($('bust').value), fuel: Number($('fuel').value),
+  severity: Number($('sev').value), coachWeight: Number($('coach').value), promote: Number($('prom').value),
+  spGrant: Number($('xp').value), awardSp: Number($('aw').value), turnaround: Number($('turn').value),
+  seed: Number($('seed').value),
+});
+
+$('useDS').onchange = () => { clearResults(); renderPlan(); };
+$('useRT').onchange = () => { clearResults(); renderPlan(); };
+$('override').onchange = () => { $('overrideRow').hidden = !$('override').checked; clearResults(); applyPassDefaults(); renderPlan(); };
+$('overridePhase').onchange = () => { clearResults(); applyPassDefaults(); renderPlan(); };
+
+// --- running ---------------------------------------------------------------
+async function runPlan(write) {
+  const c = $('confirmNew');
+  const r = await window.dd.run({
+    save: $('saveSel').value, write, settings: settings(),
+    parts: { spread: $('useDS').checked, regression: $('useRT').checked },
+    phaseOverride: $('override').checked ? $('overridePhase').value : null,
+    confirmNoRecords: !!(c && c.checked),
+  });
+  for (const s of r.steps || []) renderStep(s);
+  if (!r.ok) {
+    const wrote = (r.steps || []).filter((s) => s.result && s.result.written).map((s) => STEP_NAME[s.step]);
+    throw new Error(r.error + (wrote.length ? ` (already applied and backed up: ${wrote.join('; ')})` : ''));
+  }
+  return r;
+}
+
+function clearResults() {
+  for (const id of ['rtPanel', 'rtPlayersPanel', 'dsPanel', 'dsPlayersPanel']) $(id).hidden = true;
+  $('applyBtn').disabled = true;
+  $('msg').textContent = '';
+}
+
+$('previewBtn').onclick = async () => {
+  clearResults();
+  $('msg').innerHTML = '<span class="spin"></span>reading the save, this takes a few seconds per pass...';
+  try { await runPlan(false); $('applyBtn').disabled = false; $('msg').textContent = ''; }
+  catch (e) { $('msg').textContent = 'Error: ' + e.message; }
+};
+$('applyBtn').onclick = async () => {
+  const c = $('confirmNew');
+  if (c && !c.checked) { $('msg').textContent = 'Tick the box under the warning first, or run on the save under its original name.'; return; }
+  const list = stepsToRun().map((s, i) => `${i + 1}. ${STEP_NAME[s]}`).join('\n');
+  const ok = await window.dd.confirmApply(`${list}\n\nEach pass backs the save up first. Make sure the game is at the main menu or closed.`);
+  if (!ok) return;
+  clearResults();
+  $('msg').innerHTML = '<span class="spin"></span>writing...';
+  try { await runPlan(true); $('applyBtn').disabled = true; $('msg').textContent = 'Done. Load your manual save, not the autosave.'; }
+  catch (e) { $('msg').textContent = 'Error: ' + e.message; }
+};
+
+function renderStep(s) {
+  if (s.step === 'regression') renderRegression(s.result);
+  else renderSpread(s.result, s.step);
+}
+
+// --- Development Spread results --------------------------------------------
+let dsRows = [];
+const DS_PAINT = 250;
+const DS_SORTS = {
+  abs: (a, b) => Math.abs(b.delta) - Math.abs(a.delta),
+  gain: (a, b) => b.delta - a.delta,
+  loss: (a, b) => a.delta - b.delta,
+  after: (a, b) => b.after - a.after,
+  name: (a, b) => a.name.localeCompare(b.name),
+};
+function renderSpread(r, step) {
+  const rows = r.groups.map((g) => `<tr><td>${g.dev.replace('College_', '')}</td><td>${g.before.n}</td>` +
+    `<td>${pct(g.before.p10)} - ${pct(g.before.p90)}</td><td><b>${pct(g.after.p10)} - ${pct(g.after.p90)}</b></td></tr>`).join('');
+  const env = r.environment
+    ? `<p class="msg">Program quality moves players by ${r.environment.biasMin.toFixed(1)} to +${r.environment.biasMax.toFixed(1)} points, across ${r.environment.teams} teams.</p>` : '';
+  const fuel = r.fuel
+    ? `<p class="msg">${r.busts ? `Busts: ${r.busts.players.toLocaleString()} players. ` : ''}Breakout fuel: ${r.fuel.points.toLocaleString()} skill points go to the ${r.fuel.players.toLocaleString()} biggest breakouts.</p>` : '';
+  const base = `<p class="msg">Baseline: ${r.baseline.existed
+    ? r.baseline.players + ' players on file, ' + r.baseline.priorRuns + ' previous run(s) - re-runs will not compound'
+    : 'new, recording ' + r.players + ' players'}.</p>`;
+  const done = r.written
+    ? `<div class="note"><b>Applied.</b> ${r.wrote} players written.<br>Backup: ${esc(r.backup)} <button id="dsBackup" style="padding:3px 9px;margin-left:6px">Show</button></div>`
+    : '<p class="msg">Preview only - nothing has been written to your save.</p>';
+  $('dsTitle').textContent = `Development Spread, ${step === 'roster' ? 'roster pass' : 'recruits pass'}: ${r.players} players - typical ceiling`;
+  $('dsResults').innerHTML = `<table><thead><tr><th>Development trait</th><th>Players</th><th>Before</th><th>After</th></tr></thead><tbody>${rows}`
+    + `<tr><td><b>All</b></td><td><b>${r.overall.before.n}</b></td><td><b>${pct(r.overall.before.p10)} - ${pct(r.overall.before.p90)}</b></td>`
+    + `<td><b>${pct(r.overall.after.p10)} - ${pct(r.overall.after.p90)}</b></td></tr></tbody></table>${env}${fuel}${base}${done}`;
+  $('dsPanel').hidden = false;
+  const ob = $('dsBackup');
+  if (ob) ob.onclick = () => window.dd.showBackup(r.backup);
+  dsRows = r.rows || [];
+  $('dsPlayersPanel').hidden = !dsRows.length;
+  renderDsPlayers();
+}
+function dsFiltered() {
+  const q = $('dsFilter').value.trim().toLowerCase();
+  const rows = q ? dsRows.filter((r) => (r.name + ' ' + r.team + ' ' + r.pos + ' ' + r.dev).toLowerCase().includes(q)) : dsRows.slice();
+  return rows.sort(DS_SORTS[$('dsSort').value] || DS_SORTS.abs);
+}
+function renderDsPlayers() {
+  if (!dsRows.length) return;
+  const rows = dsFiltered();
+  $('dsBody').innerHTML = rows.slice(0, DS_PAINT).map((r) => {
+    const d = r.delta > 0 ? `<span class="up">+${r.delta}</span>` : r.delta < 0 ? `<span class="down">${r.delta}</span>` : '0';
+    return `<tr><td>${esc(r.name)}</td><td>${esc(r.pos)}</td><td class="n">${r.ovr || ''}</td>` +
+      `<td>${esc(r.dev)}</td><td>${esc(r.team)}</td>` +
+      `<td class="n">${r.before}</td><td class="n">${r.after}</td><td class="n">${d}</td></tr>`;
+  }).join('');
+  const moved = rows.filter((r) => r.delta !== 0).length;
+  $('dsCount').textContent = rows.length > DS_PAINT
+    ? `Showing the top ${DS_PAINT} of ${rows.length.toLocaleString()} players (${moved.toLocaleString()} changed). Search, or export the CSV for the rest.`
+    : `${rows.length.toLocaleString()} players (${moved.toLocaleString()} changed).`;
+}
+
+// --- Regression Tool results -----------------------------------------------
+let rtRows = [];
+const RT_PAINT = 300;
+function renderRegression(r) {
+  const c = r.counts;
+  const tiers = r.byTier.map((t) => `<tr><td>${t.tier}</td><td class="n">${t.before.toLocaleString()}</td>` +
+    `<td class="n">${t.after.toLocaleString()}</td><td class="n">${t.after - t.before >= 0 ? '+' : ''}${t.after - t.before}</td></tr>`).join('');
+  const prog = r.byProgram.map((b) => `<tr><td>${b.label}</td><td class="n">${b.atRisk.toLocaleString()}</td>` +
+    `<td class="n">${b.regressed}</td><td class="n"><b>${(b.regressRate * 100).toFixed(1)}%</b></td>` +
+    `<td class="n">${(b.promoteRate * 100).toFixed(1)}%</td></tr>`).join('');
+  const done = r.written
+    ? `<div class="note"><b>Applied.</b> ${r.wrote.toLocaleString()} players written.<br>Backup: ${esc(r.backup)} <button id="rtBackup" style="padding:3px 9px;margin-left:6px">Show</button></div>`
+    : '<p class="msg">Preview only &mdash; nothing has been written to your save.</p>';
+  $('rtTitle').textContent = `Regression Tool, ${r.season}: ${r.players.toLocaleString()} players on a roster`;
+  $('rtResults').innerHTML = `
+    <div class="cards">
+      <div class="stat reg"><div class="v">${c.regressed.toLocaleString()}</div><div class="k">slid a tier</div></div>
+      <div class="stat cau"><div class="v">${c.coachedUp.toLocaleString()}</div><div class="k">coached up</div></div>
+      <div class="stat tur"><div class="v">${(c.turnaround || 0).toLocaleString()}</div><div class="k">turned around</div></div>
+      <div class="stat pro"><div class="v">${c.promoted.toLocaleString()}</div><div class="k">broke out</div></div>
+      <div class="stat"><div class="v">${r.netSteps >= 0 ? '+' : ''}${r.netSteps}</div><div class="k">net tier movement</div></div>
+      <div class="stat"><div class="v">${r.sp.total.toLocaleString()}</div><div class="k">skill points to ${r.sp.players.toLocaleString()} players</div></div>
+    </div>
+    <h3>Did the coaching matter?</h3>
+    <table><thead><tr><th>Programs</th><th class="n">At risk</th><th class="n">Slid</th><th class="n">Slide rate</th><th class="n">Breakout rate</th></tr></thead><tbody>${prog}</tbody></table>
+    <h3>Skill points handed out</h3>
+    <table><thead><tr><th>Reason</th><th class="n">Players</th><th class="n">Skill points</th></tr></thead><tbody>
+      <tr><td>Coached up &mdash; staff stopped a slide</td><td class="n">${c.coachedUp.toLocaleString()}</td><td class="n">${r.sp.forCoaching.toLocaleString()}</td></tr>
+      <tr><td>Broke out or turned around</td><td class="n">${(c.promoted + (c.turnaround || 0)).toLocaleString()}</td><td class="n">${(r.sp.total - r.sp.forCoaching - r.sp.forAwards).toLocaleString()}</td></tr>
+      <tr><td>Won an award</td><td class="n">${r.sp.awarded.toLocaleString()}</td><td class="n">${r.sp.forAwards.toLocaleString()}</td></tr>
+    </tbody></table>
+    <h3>Development traits across the league</h3>
+    <table><thead><tr><th>Trait</th><th class="n">Before</th><th class="n">After</th><th class="n">Change</th></tr></thead><tbody>${tiers}</tbody></table>
+    <p class="msg">${r.snapshot.sameSeason
+      ? 'Re-run of this same season (run #' + r.snapshot.priorRuns + ') &mdash; re-rolled from the traits players started the season with, not stacked on the last run.'
+      : 'First run for this season &mdash; last season&rsquo;s results are the starting point.'}</p>
+    ${done}`;
+  $('rtPanel').hidden = false;
+  const ob = $('rtBackup');
+  if (ob) ob.onclick = () => window.dd.showBackup(r.backup);
+  rtRows = r.rows || [];
+  $('rtPlayersPanel').hidden = !rtRows.length;
+  renderRtPlayers();
+}
+function rtFiltered() {
+  const q = $('rtFilter').value.trim().toLowerCase();
+  const only = $('rtOutcome').value;
+  return rtRows
+    .filter((r) => (only === 'all' ? true : r.outcome === only))
+    .filter((r) => (q ? (r.name + ' ' + r.team + ' ' + r.pos + ' ' + r.year).toLowerCase().includes(q) : true))
+    .sort((a, b) => a.gap - b.gap);
+}
+const OUTCOME = { coachedUp: 'coached up', turnaround: 'turned around', promoted: 'broke out', regressed: 'slid' };
+function renderRtPlayers() {
+  const rows = rtFiltered();
+  $('rtBody').innerHTML = rows.slice(0, RT_PAINT).map((r) => `<tr><td>${esc(r.name)}</td><td>${esc(r.pos)}</td>` +
+    `<td>${esc(String(r.year).replace('College_', ''))}</td><td>${esc(r.team)}</td>` +
+    `<td class="n">${r.ovr}</td><td class="n">${r.expected}</td>` +
+    `<td class="n">${r.perfRank === null || r.perfRank === undefined ? '-' : r.perfRank + '%'}</td>` +
+    `<td class="n">${r.awards || ''}</td><td>${esc(r.before)}</td><td>${esc(r.after)}</td>` +
+    `<td><span class="pill ${r.outcome}">${OUTCOME[r.outcome] || 'award'}</span></td>` +
+    `<td class="n">${r.sp ? '+' + r.sp.toLocaleString() : ''}</td></tr>`).join('');
+  $('rtCount').textContent = rows.length > RT_PAINT
+    ? `Showing ${RT_PAINT} of ${rows.length.toLocaleString()}, furthest behind their peers first. Search, or export the CSV for the rest.`
+    : `${rows.length.toLocaleString()} players.`;
+}
+
+// --- lists: filters and CSV ------------------------------------------------
+const debounce = (fn) => { let t = null; return () => { clearTimeout(t); t = setTimeout(fn, 150); }; };
+$('dsFilter').oninput = debounce(renderDsPlayers);
+$('dsSort').onchange = renderDsPlayers;
+$('rtFilter').oninput = debounce(renderRtPlayers);
+$('rtOutcome').onchange = renderRtPlayers;
+async function exportCsv(kind, rows, countEl, rerender) {
+  const saveName = ($('saveSel').selectedOptions[0] || {}).textContent || 'dynasty';
+  $(countEl).textContent = 'Writing CSV...';
+  const r = await window.dd.exportCsv({ kind, rows, saveName: saveName.replace(/ \(autosave\)$/, '') });
+  if (!r.ok) { $(countEl).textContent = 'Export failed: ' + r.error; return; }
+  if (r.canceled) { rerender(); return; }
+  $(countEl).textContent = `Exported ${r.rows.toLocaleString()} players to ${r.file}`;
+}
+$('dsCsvBtn').onclick = () => exportCsv('spread', dsFiltered(), 'dsCount', renderDsPlayers);
+$('rtCsvBtn').onclick = () => exportCsv('regression', rtFiltered(), 'rtCount', renderRtPlayers);
+
+// --- save picking ----------------------------------------------------------
+$('refreshBtn').onclick = refreshSaves;
+$('saveSel').onchange = inspectSave;
+$('browseBtn').onclick = async () => {
+  const p = await window.dd.browseSave();
+  if (!p) return;
+  const sel = $('saveSel');
+  let opt = [...sel.options].find((o) => o.value === p);
+  if (!opt) { opt = new Option(p.split(/[\\/]/).pop(), p); sel.add(opt, 0); }
+  sel.value = p;
+  inspectSave();
+};
+
+// --- tabs ------------------------------------------------------------------
+function showTab(name) {
+  for (const t of ['run', 'help']) {
+    $('tab-' + t).hidden = (t !== name);
+    $('tabbtn-' + t).setAttribute('aria-selected', String(t === name));
+  }
+  window.scrollTo(0, 0);
+}
+$('tabbtn-run').onclick = () => showTab('run');
+$('tabbtn-help').onclick = () => showTab('help');
+
+settingsSummary();
+refreshSaves();
+</script>
+</body>
+</html>

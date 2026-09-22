@@ -64,4 +64,4 @@ Everything else — including the manual phase override, for a league whose seas
 * The season-stage mapping (which offseason stage is National Signing Day) is read relative to how many stages your league has, and was only ever observed on 9-stage dynasties. A manual override exists under Settings > Advanced for a league that doesn't read the way the app expects.
 * The Regression Tool needs a played season to judge from; a save mid-season only holds preseason and weekly awards, not a full year's production.
 * Offensive-line judging can't use QB hits or pressures (the game doesn't record them) or per-player penalties (only team totals exist).
-* Windows only. Built and tested on the September 2026 game build.
+* Windows only. Built and tested on the September 2026 game build, and re-verified unchanged against the 2026-09-22 title update.

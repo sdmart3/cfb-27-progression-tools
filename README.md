@@ -40,3 +40,5 @@ The Development Spread and the Regression Tool started as two separate internal 
 ## Status
 
 Private for now. The maths and in-game validation are done (six full test seasons; every formula and result is in `docs/Method.html`); this repo is a clean, self-tested build of that work.
+
+Verified against the 2026-09-22 CFB 27 title update (gameVersion 4330836): nothing the app relies on changed — the level-to-rating splines, `SkillGroupCapMax` (20), every skill-group SP cost curve and the XP-per-skill-point spline all decode identically out of the live post-patch tuning, and the development-trait tiers and save fields the passes read are untouched.
